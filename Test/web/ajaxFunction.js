@@ -5,33 +5,11 @@ var app = new Vue(
       selectValue: "All States",
       checkBoxValues: ['D','R','I'],
       membersRaw: [],
-      membersFiltered: [],
+
       statisticsNumbers: [],      
       statisticsAttendance: [],
       statisticsLoyalty: [],
     },
-    methods: {
-      getSelectInput: function() {
-        let select = document.getElementById('stateSelect').value;
-        console.log(select);
-        this.selectValue = select;
-        return this.selectValue;
-      },
-      getCheckedBoxes: function() {
-        let checkboxes = document.getElementsByName('party');
-        let checkboxesChecked = [];
-        for (let i=0; i<checkboxes.length; i++)
-        {
-          // And stick the checked ones onto an array...
-          if (checkboxes[i].checked) {
-              checkboxesChecked.push(checkboxes[i].value);
-          }
-        }
-        this.checkBoxValues = checkboxesChecked;
-        // Return the array if it is non-empty, or return null
-        return this.checkBoxValues.length > 0 ? this.checkBoxValues : [];
-      },
-
     /*applyFilter: function(member)          //Conditional Rendering, Same Array
       {       
         if(member.state == this.selectValue || this.selectValue == "All States")
@@ -44,20 +22,18 @@ var app = new Vue(
         }
         else return false;
       }*/
-
-      applyFilter: function()                //Conditions modify array, rendered always
+    computed: {
+      membersFiltered: function ()
       {
-        let checkBoxesInput = this.getCheckedBoxes();
-        let selectInput = this.getSelectInput();
         let filteredArray = [];
         
         this.membersRaw.map(function(member)
         {
-          if(member.state == selectInput || selectInput == "All States")
+          if(member.state == this.selectValue || this.selectValue == "All States")
           {
-            for(let checkboxIndex = 0; checkboxIndex < checkBoxesInput.length; checkboxIndex++)
+            for(let checkboxIndex = 0; checkboxIndex < this.checkBoxValues.length; checkboxIndex++)
             {
-              if(member.party == checkBoxesInput[checkboxIndex])
+              if(member.party == this.checkBoxValues[checkboxIndex])
               {
                 filteredArray.push(member);
                 break;
@@ -69,7 +45,8 @@ var app = new Vue(
         this.membersFiltered = filteredArray;
         return this.membersFiltered;
       }
-    },
+    }
+     
 });
 
 function requestData(type)
